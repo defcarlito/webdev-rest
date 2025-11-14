@@ -88,6 +88,9 @@ app.put('/new-incident', (req, res) => {
 app.delete('/remove-incident', (req, res) => {
     console.log(req.body); // uploaded data
     
+    
+    
+    
     res.status(200).type('txt').send('OK'); // <-- you may need to change this
 });
 

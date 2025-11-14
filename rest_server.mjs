@@ -56,35 +56,35 @@ function dbRun(query, params) {
 /********************************************************************
  ***   REST REQUEST HANDLERS                                      *** 
  ********************************************************************/
-// GET request handler for crime codes
+// GET request handler for crime codes - Angelika
 app.get('/codes', (req, res) => {
     console.log(req.query); // query object (key-value pairs after the ? in the url)
     
     res.status(200).type('json').send({}); // <-- you will need to change this
 });
 
-// GET request handler for neighborhoods
+// GET request handler for neighborhoods - Sam
 app.get('/neighborhoods', (req, res) => {
     console.log(req.query); // query object (key-value pairs after the ? in the url)
     
     res.status(200).type('json').send({}); // <-- you will need to change this
 });
 
-// GET request handler for crime incidents
+// GET request handler for crime incidents - Harrison
 app.get('/incidents', (req, res) => {
     console.log(req.query); // query object (key-value pairs after the ? in the url)
     
     res.status(200).type('json').send({}); // <-- you will need to change this
 });
 
-// PUT request handler for new crime incident
+// PUT request handler for new crime incident - Sam
 app.put('/new-incident', (req, res) => {
     console.log(req.body); // uploaded data
     
     res.status(200).type('txt').send('OK'); // <-- you may need to change this
 });
 
-// DELETE request handler for new crime incident
+// DELETE request handler for new crime incident - Harrison
 app.delete('/remove-incident', (req, res) => {
     console.log(req.body); // uploaded data
     

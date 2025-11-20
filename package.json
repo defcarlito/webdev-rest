@@ -1,16 +1,24 @@
 {
-    "name": "rest_server",
-    "description": "REST Server",
-    "version": "1.0.0",
-    "author": {
-        "name": "",
-        "email": ""
+  "name": "rest_server",
+  "description": "REST Server",
+  "version": "1.0.0",
+  "author": {
+    "name": "Harrison Amorim",
+    "email": "amor7967@stthomas.edu"
+  },
+  "contributors": [
+    {
+      "name": "Samuel Dewey",
+      "email": "dewe2513@stthomas.edu"
     },
-    "contributors": [
-    ],
-    "repository": {},
-    "dependencies": {
-        "express": "^4.18.2",
-        "sqlite3": "^5.1.6"
+    {
+      "name": "Anzhelika Vinorova",
+      "email": "vino8924@stthomas.edu"
     }
+  ],
+  "repository": { "url": "https://github.com/defcarlito/webdev-rest" },
+  "dependencies": {
+    "express": "^4.18.2",
+    "sqlite3": "^5.1.6"
+  }
 }

@@ -57,7 +57,44 @@ function dbRun(query, params) {
 app.get("/codes", (req, res) => {
   console.log(req.query) // query object (key-value pairs after the ? in the url)
 
-  res.status(200).type("json").send({}) // <-- you will need to change this
+  console.log(req.query);
+    let sql = "SELECT code, incident_type FROM Codes";
+    let params = [];
+
+    const codeParam = req.query.code;
+
+    if (codeParam) {
+        // split csv
+        const codes = codeParam
+            .split(",")
+            .map((c) => c.trim())
+            .filter((c) => c !== "");
+        // check if all integers
+        if (codes.some((c) => isNaN(parseInt(c)))) {
+            res
+                .status(400)
+                .type("txt")
+                .send('Error: "code" must be a comma separated list of integers');
+            return;
+        }
+        const placeholders = codes.map(() => "?").join(",");
+        sql += ` WHERE code IN (${placeholders})`;
+        params = codes;
+    }
+
+    sql += " ORDER BY code ASC";
+
+    dbSelect(sql, params)
+        .then((rows) => {
+            const data = rows.map((row) => ({
+                code: row.code,
+                type: row.incident_type,
+            }));
+            res.status(200).type("json").send(data);
+        })
+        .catch((err) => {
+            res.status(500).type("txt").send(`Database error: ${err}`);
+        });
 })
 
 // GET request handler for neighborhoods - Sam

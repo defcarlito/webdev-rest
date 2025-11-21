@@ -65,19 +65,14 @@ app.get("/neighborhoods", (req, res) => {
   console.log(req.query) // query object (key-value pairs after the ? in the url)
   const id = req.query.id
 
-  let whereConditions = []
+  let where = ""
   let qParams = []
 
   if (id) {
     const ids = id.split(",")
     const ph = ids.map(() => "?").join(",")
-    whereConditions.push(`neighborhood_number IN (${ph})`)
+    where = `WHERE neighborhood_number IN (${ph})`
     qParams.push(...id.split(","))
-  }
-
-  let where = ""
-  if (whereConditions.length > 0) {
-    where = "WHERE " + whereConditions.join(" AND ")
   }
 
   const q = `

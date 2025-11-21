@@ -63,8 +63,47 @@ app.get("/codes", (req, res) => {
 // GET request handler for neighborhoods - Sam
 app.get("/neighborhoods", (req, res) => {
   console.log(req.query) // query object (key-value pairs after the ? in the url)
+  const id = req.query.id
 
-  res.status(200).type("json").send({}) // <-- you will need to change this
+  let whereConditions = []
+  let qParams = []
+
+  if (id) {
+    const ids = id.split(",")
+    const ph = ids.map(() => "?").join(",")
+    whereConditions.push(`neighborhood_number IN (${ph})`)
+    qParams.push(...id.split(","))
+  }
+
+  let where = ""
+  if (whereConditions.length > 0) {
+    where = "WHERE " + whereConditions.join(" AND ")
+  }
+
+  const q = `
+    SELECT neighborhood_number, neighborhood_name
+    FROM Neighborhoods
+    ${where}
+    ORDER BY neighborhood_number
+    `
+
+  let finalData = []
+  const rows = dbSelect(q, qParams)
+  rows
+    .then((data) => {
+      data.forEach((neighborhood) => {
+        finalData.push({
+          id: neighborhood.neighborhood_number,
+          name: neighborhood.neighborhood_name,
+        })
+      })
+    })
+    .then(() => {
+      res.status(200).type("json").send(finalData)
+    })
+    .catch((error) => {
+      res.status(400).type("txt").send(`Error: ${error}`)
+    })
 })
 
 // GET request handler for crime incidents - Harrison
@@ -157,8 +196,39 @@ app.get("/incidents", (req, res) => {
 // PUT request handler for new crime incident - Sam
 app.put("/new-incident", (req, res) => {
   console.log(req.body) // uploaded data
+  
+  const { case_number, date, time, code, incident, police_grid, neighborhood_number, block } = req.body
 
-  res.status(200).type("txt").send("OK") // <-- you may need to change this
+  // Validate required fields
+  if (!case_number || !date || !time || !code || !incident || !police_grid || !neighborhood_number || !block) {
+    return res.status(400).type("txt").send("Error: Missing required fields")
+  }
+
+  // Combine date and time into datetime format
+  const date_time = `${date}T${time}`
+
+  // Check if already exists
+  const checkQuery = "SELECT case_number FROM Incidents WHERE case_number = ?"
+  dbSelect(checkQuery, [case_number])
+    .then((data) => {
+      if (data.length > 0) {
+        return Promise.reject("Case number already exists.")
+      }
+    })
+    // Insert new 
+    .then(() => {
+      const insertQuery = `
+        INSERT INTO Incidents (case_number, date_time, code, incident, police_grid, neighborhood_number, block)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+      `
+      return dbRun(insertQuery, [case_number, date_time, code, incident, police_grid, neighborhood_number, block])
+    })
+    .then(() => {
+      res.status(200).type("txt").send("Successfully added new incident")
+    })
+    .catch((error) => {
+      res.status(500).type("txt").send(`Error: ${error}`)
+    })
 })
 
 // DELETE request handler for new crime incident - Harrison
